@@ -7,6 +7,9 @@ import datetime
 ######################
 app = Flask(__name__)
 input("Are you authorized?")
+
+def timeStamped(fname, fmt='%Y-%m-%d-%H-%M-%S_{fname}'):
+    return datetime.datetime.now().strftime(fmt).format(fname=fname)
 @app.route("/sms", methods =['POST'])
 def sms():
     now = datetime.datetime.now()
@@ -52,9 +55,14 @@ def sms():
                     to = '+16012873833'
                 )
             print("Intel Sent to Administrator")
-            with open("INTEL_MSG: {0}".format(__now), "w") as f:
+            with open(timeStamped("INTEL_MSG.txt"), "w") as f:
                 f.write("Body: {0}, From: {1}, SID: {2}".format(__bodyResp, number, message.sid))
             return str(message)
+        else:
+            NoIntel = str("No intel Recived. No message sent.")
+            return str(NoIntel)
+    ####################################################################################################################################################
+
     elif bodyList[0] == "Z" and bodyList[1] == "2" and bodyList[2] == "7" and number == '+16012873833':
         account_sid = 'AC020f2f6306dc7ef75bc61e09cfb63a96'
         auth_token = '6cfcd6fa0f0ddab26250ed24680066b9'
@@ -70,7 +78,9 @@ def sms():
         ############################################################             #
         stormAlert = bodySplit.count('tornado')  #
         stormAlert1 = bodySplit.count('storm')   #
-        __stormAlert = (stormAlert + stormAlert1)#
+        stormAlertP = bodySplit.count('tornados')
+        stormAlert1P = bodySplit.count('storms')
+        __stormAlert = (stormAlert + stormAlertP + stormAlert1 + stormAlert1P)#
         ##########################################
         atkAlert = bodySplit.count('attack')           #
         atkAlertP = bodySplit.count('attacks')         #
@@ -89,9 +99,9 @@ def sms():
                 )
             print(message.status)
             print(message.sid)
-            with open("STRM_MSG: {0}".format(__now), "w") as f:
-                f.write("Body: {0}, From: {1}, SID: {2}".format(__bodyResp, number, message.sid))
             print('Alert Sent')
+            with open(timeStamped("STRM_MSG.txt"), "w") as f:
+                f.write("Body: {0}, From: {1}, SID: {2}".format(__bodyResp, number, message.sid))
             return str(message)
         elif __atkWarn in range15:
             message = client.messages \
@@ -102,10 +112,16 @@ def sms():
                 )
             print(message.status)
             print(message.sid)
-            with open("ATK_MSG: {0}".format(__now), "w") as f:
+            print('Alert Sent')
+            with open(timeStamped("ATK_MSG.txt"), "w") as f:
                 f.write("Body: {0}, From: {1}, SID: {2}".format(__bodyResp, number, message.sid))
-            print('ALERT SENT')
             return str(message)
+        else:
+            NoIntel = str("No intel Recived. No message sent.")
+            return str(NoIntel)
+    else:
+        NoIntel = str("No intel Recived. No message sent.")
+        return str(NoIntel)
 
 ###################################### VOICE ############################################
 @app.route("/record", methods=['GET', 'POST'])

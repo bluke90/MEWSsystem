@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['MEWSserver.py'],
-             pathex=['D:\\Project\\MEWSsystem\\MEWSsystem\\MEWS'],
+             pathex=['G:\\Projects\\MEWS\\MEWSsystem\\MEWS'],
              binaries=[],
              datas=[],
              hiddenimports=[],
