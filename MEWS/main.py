@@ -1,6 +1,6 @@
 import subprocess
 import os
-from tkinter import *
+from tkinter import Tk, Label, Entry, Place, Button
 ######### FUNCTIONS ###########
 
 def nClick(): #NEWS CLICK
@@ -9,8 +9,8 @@ def nClick(): #NEWS CLICK
 def nsClick(): #NAME SEARCH CLICK
     import testMsg
     ####
-def enAlg():
-    import encryptionAlg
+def addNumber():
+    import addNumber
 ############# START ###############
 window = Tk()                     #
 window.geometry("400x400")        #
@@ -27,7 +27,7 @@ nBtn.place(x=17,y=25)
 nsBtn = Button(window, text="Send Test", command=nsClick, width="50")
 nsBtn.place(x=17,y=55)
 #
-enAlgBtn = Button(window, text="Add Number", command=enAlg, width="50")
+enAlgBtn = Button(window, text="Add Number", command=addNumber, width="50")
 enAlgBtn.place(x=17,y=85)
 #
 #

@@ -12,12 +12,21 @@ def timeStamped(fname, fmt='%Y-%m-%d-%H-%M-%S_{fname}'):
     return datetime.datetime.now().strftime(fmt).format(fname=fname)
 @app.route("/sms", methods =['POST'])
 def sms():
+    ########## Numbers List ############
+    with open('numbers.txt', "r") as n:#
+        numbers = n.read()             #
+    n.close()                          #
+    numbersX = numbers.split("\n")     #
+    ####################################
+    ######## Get Date and time #########
     now = datetime.datetime.now()
     __now = now.strftime("%Y_%m_%d_%H_%M_%S")
+    ####################################
     number = request.form['From']
     body = request.form['Body']
     bodySplit = body.split(" ")
     bodyList = list(body)
+    ############ Begin processing ############
     if bodyList[0] == "X" and bodyList[1] == "2" and bodyList[2] == "7":
         account_sid = 'AC020f2f6306dc7ef75bc61e09cfb63a96'
         auth_token = '6cfcd6fa0f0ddab26250ed24680066b9'
@@ -80,6 +89,8 @@ def sms():
         stormAlert1 = bodySplit.count('storm')   #
         stormAlertP = bodySplit.count('tornados')
         stormAlert1P = bodySplit.count('storms')
+        stormAlert2 = bodySplit.count('rain')
+        stormAlert3 = bodySplit.count('rainfall')
         __stormAlert = (stormAlert + stormAlertP + stormAlert1 + stormAlert1P)#
         ##########################################
         atkAlert = bodySplit.count('attack')           #
@@ -91,17 +102,19 @@ def sms():
         __atkWarn = (atkAlert + atkAlertP + atkAlert1 + atkAlert1P + atkAlert2 + atkAlert3)#
        ######################################################################################
         if __stormAlert in range15:
-            message = client.messages \
-                .create(
-                    body = "The MEWS system has detected life threatning events in the area. We have recived intel of {0} from multiple sources.".format(__bodyResp),
-                    from_ = '+16013745980',
-                    to = '+16012873833'
-                )
-            print(message.status)
-            print(message.sid)
-            print('Alert Sent')
             with open(timeStamped("STRM_MSG.txt"), "w") as f:
-                f.write("Body: {0}, From: {1}, SID: {2}".format(__bodyResp, number, message.sid))
+                for __numbers in numbersX:
+                    message = client.messages \
+                    .create(
+                        body = "The MEWS system has detected life threatning events in the area. Intel of {0} from multiple sources.".format(__bodyResp),
+                        from_ = '+16013745980',
+                        to = __numbers
+                    )
+                    print(message.status)
+                    print(message.sid)
+                    print('Alert Sent')
+                    f.write("Body: {0}, From: {1}, SID: {2}; \n".format(__bodyResp, number, message.sid))
+                f.close()
             return str(message)
         elif __atkWarn in range15:
             message = client.messages \
@@ -114,13 +127,19 @@ def sms():
             print(message.sid)
             print('Alert Sent')
             with open(timeStamped("ATK_MSG.txt"), "w") as f:
-                f.write("Body: {0}, From: {1}, SID: {2}".format(__bodyResp, number, message.sid))
+                f.write("Body: {0}, From: {1}, SID: {2}\n".format(__bodyResp, number, message.sid))
             return str(message)
         else:
             NoIntel = str("No intel Recived. No message sent.")
+            with open(timeStamped('NoIntel_MSG.txt'), "w") as f:
+                f.write("Body: {0}, From: {1}, SID: {2}\n".format(__bodyResp, number, message.sid))
+            f.close()
             return str(NoIntel)
     else:
         NoIntel = str("No intel Recived. No message sent.")
+        with open(timeStamped('NoIntel_MSG.txt'), "w") as f:
+            f.write("Body: {0}, From: {1}, SID: {2}\n".format(__bodyResp, number, message.sid))
+        f.close()
         return str(NoIntel)
 
 ###################################### VOICE ############################################

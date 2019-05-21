@@ -34,7 +34,7 @@ def lClick():
                 enPassW[17] = ""
                 unEnPassW = ''.join(enPassW)
                 con = pymysql.connect(host='192.187.109.18',
-                    user='py',
+                    user='root',
                     password=unEnPassW,
                     db='python1',
                     charset='utf8mb4',
