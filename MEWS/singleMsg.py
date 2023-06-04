@@ -1,8 +1,8 @@
 from twilio.rest import Client
 from tkinter import *
 #####################333
-account_sid = 'AC020f2f6306dc7ef75bc61e09cfb63a96'
-auth_token = '6cfcd6fa0f0ddab26250ed24680066b9'
+account_sid = 'ACCOUNT_SID'
+auth_token = 'AUTH_TOKEN'
 client = Client(account_sid, auth_token)
 smWindow = Tk()
 smWindow.title("MEWS Single Recipent SMS")
